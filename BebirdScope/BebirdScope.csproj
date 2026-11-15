@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- the 10.0.19041 platform version gives access to the Windows media APIs used for MP4 recording -->
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>BebirdScope</RootNamespace>
+    <AssemblyName>BebirdScope</AssemblyName>
+    <Version>1.1.0</Version>
+    <Product>Bebird Scope</Product>
+    <Description>Unofficial viewer for the Bebird K10 USB otoscope with gyro auto-level</Description>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DirectShowLib" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>

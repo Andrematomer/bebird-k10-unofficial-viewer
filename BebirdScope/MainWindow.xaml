@@ -1,0 +1,357 @@
+<Window x:Class="BebirdScope.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bebird Scope" Width="1200" Height="820" MinWidth="720" MinHeight="520"
+        Background="#000000" Foreground="#E8EAED"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI Variable Text, Segoe UI"
+        UseLayoutRounding="True" SnapsToDevicePixels="True">
+
+    <Window.Resources>
+        <!-- One shared scale: all controls grow with the window so they stay readable on a 4K screen. -->
+        <ScaleTransform x:Key="UiScale" ScaleX="1" ScaleY="1"/>
+
+        <!-- grey shortcut hint that sits OUTSIDE the button (same idea as the ear toggle) -->
+        <Style x:Key="KeyHintLeft" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="#8A8F98"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="12,0,0,0"/>
+        </Style>
+        <Style x:Key="KeyHintRight" TargetType="TextBlock" BasedOn="{StaticResource KeyHintLeft}">
+            <Setter Property="Margin" Value="0,0,12,0"/>
+        </Style>
+
+        <Style x:Key="PillButton" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Foreground" Value="#D3D7DD"/>
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="Width" Value="133"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" CornerRadius="21" Background="#1B1D22" BorderBrush="#2E323A"
+                                BorderThickness="1" Padding="4,9">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#272A32"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#323640"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PillToggle" TargetType="ToggleButton">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Foreground" Value="#D3D7DD"/>
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="Width" Value="133"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="4,9"/>
+            <Setter Property="Tag">
+                <Setter.Value><CornerRadius>21</CornerRadius></Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bd" CornerRadius="{TemplateBinding Tag}" Background="#1B1D22" BorderBrush="#2E323A"
+                                BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#272A32"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1C6B58"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#2FA68A"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- same, but turns red while recording -->
+        <Style x:Key="PillToggleRed" TargetType="ToggleButton" BasedOn="{StaticResource PillToggle}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bd" CornerRadius="21" Background="#1B1D22" BorderBrush="#2E323A"
+                                BorderThickness="1" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#272A32"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#9B2C2C"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#E5574F"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkBox" TargetType="TextBox">
+            <Setter Property="Foreground" Value="#E8EAED"/>
+            <Setter Property="CaretBrush" Value="#E8EAED"/>
+            <Setter Property="SelectionBrush" Value="#2FA68A"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Padding" Value="14,9"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd" Background="#1B1D22" BorderBrush="#2E323A" BorderThickness="1"
+                                CornerRadius="21" Padding="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#2FA68A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkCheck" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#D3D7DD"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal" Background="Transparent">
+                            <Border x:Name="Box" Width="22" Height="22" CornerRadius="6" Background="#1B1D22"
+                                    BorderBrush="#4A4F59" BorderThickness="1.5">
+                                <TextBlock x:Name="Tick" Text="✓" Foreground="White" FontSize="15"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                            </Border>
+                            <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Box" Property="Background" Value="#1C6B58"/>
+                                <Setter TargetName="Box" Property="BorderBrush" Value="#2FA68A"/>
+                                <Setter TargetName="Tick" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="RootGrid" Background="Black" ClipToBounds="True"
+          MouseLeftButtonDown="Video_MouseDown" SizeChanged="Layout_Changed">
+
+        <!-- The picture. Its size is set in code so the circle is as large as the window allows. -->
+        <Viewbox x:Name="VideoBox" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Visibility="Collapsed">
+            <Grid x:Name="StageGrid" Width="480" Height="480">
+                <Grid x:Name="ClipGrid">
+                    <Image x:Name="VideoImage" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           RenderTransformOrigin="0.5,0.5" RenderOptions.BitmapScalingMode="HighQuality">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <RotateTransform x:Name="RotateT"/>
+                                <ScaleTransform x:Name="ScaleT"/>
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                    </Image>
+                </Grid>
+            </Grid>
+        </Viewbox>
+
+        <!-- Shown while there is no live picture -->
+        <Grid x:Name="Overlay" Background="#E6000000">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel.LayoutTransform><StaticResource ResourceKey="UiScale"/></StackPanel.LayoutTransform>
+                <TextBlock x:Name="OverlayTitle" Text="Plug in your Bebird K10" FontSize="28"
+                           FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="OverlaySub" Text="Looking for the camera…" FontSize="15"
+                           Foreground="#8A8F98" HorizontalAlignment="Center" Margin="0,10,0,0"
+                           TextWrapping="Wrap" TextAlignment="Center" MaxWidth="520"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Top-left corner: how the picture looks -->
+        <Grid x:Name="HostLeft" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14" SizeChanged="Layout_Changed">
+            <StackPanel x:Name="PanelLeft">
+                <StackPanel.LayoutTransform><StaticResource ResourceKey="UiScale"/></StackPanel.LayoutTransform>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <ToggleButton x:Name="BtnLevel" Style="{StaticResource PillToggle}" Content="Auto-level"
+                                  Click="Level_Click" ToolTip="Keep the picture upright using the wand's sensor"/>
+                    <TextBlock Text="S" Style="{StaticResource KeyHintLeft}"/>
+                </StackPanel>
+
+                <!-- Ear selector: normal view / mirrored view (this width is the reference for every button) -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <ToggleButton x:Name="BtnEarL" Style="{StaticResource PillToggle}" Width="66" Margin="0,0,1,0"
+                                  Padding="0,9" Click="EarL_Click" ToolTip="Normal view">
+                        <ToggleButton.Tag><CornerRadius>21,0,0,21</CornerRadius></ToggleButton.Tag>
+                        <Viewbox Width="24" Height="24">
+                            <Canvas Width="24" Height="24">
+                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                      StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                      Data="M 6 8.5 A 6.5 6.5 0 1 1 19 8.5 C 19 14.5 13 14.5 13 18.5 A 3.5 3.5 0 1 1 6 18.5"/>
+                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                      StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                      Data="M 15 8.5 A 2.5 2.5 0 0 0 10 8.5 L 10 9.5 A 2 2 0 1 1 10 13.5"/>
+                            </Canvas>
+                        </Viewbox>
+                    </ToggleButton>
+                    <ToggleButton x:Name="BtnEarR" Style="{StaticResource PillToggle}" Width="66"
+                                  Padding="0,9" Click="EarR_Click" ToolTip="Mirrored view">
+                        <ToggleButton.Tag><CornerRadius>0,21,21,0</CornerRadius></ToggleButton.Tag>
+                        <Viewbox Width="24" Height="24" RenderTransformOrigin="0.5,0.5">
+                            <Viewbox.RenderTransform><ScaleTransform ScaleX="-1"/></Viewbox.RenderTransform>
+                            <Canvas Width="24" Height="24">
+                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                      StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                      Data="M 6 8.5 A 6.5 6.5 0 1 1 19 8.5 C 19 14.5 13 14.5 13 18.5 A 3.5 3.5 0 1 1 6 18.5"/>
+                                <Path Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"
+                                      StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                      Data="M 15 8.5 A 2.5 2.5 0 0 0 10 8.5 L 10 9.5 A 2 2 0 1 1 10 13.5"/>
+                            </Canvas>
+                        </Viewbox>
+                    </ToggleButton>
+                    <TextBlock Text="M" Style="{StaticResource KeyHintLeft}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <ToggleButton x:Name="BtnCircle" Style="{StaticResource PillToggle}" Content="Scope"
+                                  Click="Circle_Click" ToolTip="Round scope mask"/>
+                    <TextBlock Text="C" Style="{StaticResource KeyHintLeft}"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- Top-right corner: actions (hints on the left of each button, mirroring the left side) -->
+        <Grid x:Name="HostRight" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="14" SizeChanged="Layout_Changed">
+            <StackPanel x:Name="PanelRight">
+                <StackPanel.LayoutTransform><StaticResource ResourceKey="UiScale"/></StackPanel.LayoutTransform>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                    <TextBlock Text="R" Style="{StaticResource KeyHintRight}"/>
+                    <ToggleButton x:Name="BtnRec" Style="{StaticResource PillToggleRed}" Content="Record"
+                                  Click="Rec_Click" ToolTip="Record video (MP4) of what you see"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                    <TextBlock Text="Space" Style="{StaticResource KeyHintRight}"/>
+                    <Button x:Name="BtnSnap" Style="{StaticResource PillButton}" Content="Snapshot"
+                            Click="Snap_Click" ToolTip="Save a photo"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                    <TextBlock Text="P" Style="{StaticResource KeyHintRight}"/>
+                    <ToggleButton x:Name="BtnFreeze" Style="{StaticResource PillToggle}" Content="Freeze"
+                                  Click="Freeze_Click" ToolTip="Pause the picture"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="F11" Style="{StaticResource KeyHintRight}"/>
+                    <Button x:Name="BtnFull" Style="{StaticResource PillButton}" Content="Fullscreen"
+                            Click="Full_Click" ToolTip="Fullscreen on / off (double-click the picture also works)"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- Bottom-right corner: latest capture + where captures are saved -->
+        <Grid x:Name="HostBR" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="14" SizeChanged="Layout_Changed">
+            <StackPanel x:Name="PanelBR">
+                <StackPanel.LayoutTransform><StaticResource ResourceKey="UiScale"/></StackPanel.LayoutTransform>
+
+                <Border x:Name="ThumbBorder" Width="104" Height="104" HorizontalAlignment="Right" CornerRadius="16"
+                        BorderBrush="#2E323A" BorderThickness="1" Background="#1B1D22" Cursor="Hand" Margin="0,0,0,10"
+                        MouseLeftButtonUp="Thumb_Click"
+                        ToolTip="Latest photo or video. Click to show it in Explorer.">
+                    <Grid>
+                        <TextBlock x:Name="ThumbEmpty" Text="No captures yet" FontSize="13" Foreground="#6E737C"
+                                   TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" Margin="8"/>
+                        <Border x:Name="ThumbPlay" Visibility="Collapsed" Width="34" Height="34" CornerRadius="17"
+                                Background="#A0000000" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="▶" FontSize="15" Foreground="White" HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" Margin="3,0,0,0"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBox x:Name="PathBox" Style="{StaticResource DarkBox}" Width="270" VerticalContentAlignment="Center"
+                             ToolTip="Folder where photos and videos are saved. Press Enter to apply."
+                             PreviewKeyDown="PathBox_KeyDown" LostKeyboardFocus="PathBox_LostFocus"/>
+                    <Button x:Name="BtnBrowse" Style="{StaticResource PillButton}" Content="…" Width="46" Margin="8,0,0,0"
+                            Click="Browse_Click" ToolTip="Choose the save folder"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- Bottom-left corner: status -->
+        <Grid x:Name="HostStatus" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="14" SizeChanged="Layout_Changed">
+            <StackPanel x:Name="PanelStatus">
+                <StackPanel.LayoutTransform><StaticResource ResourceKey="UiScale"/></StackPanel.LayoutTransform>
+
+                <Border x:Name="DiagBox" Padding="10,8" CornerRadius="8" Background="#CC000000" Margin="0,0,0,8"
+                        Visibility="Collapsed" IsHitTestVisible="False" HorizontalAlignment="Left">
+                    <TextBlock x:Name="DiagText" FontFamily="Consolas" FontSize="12" Foreground="#B8F0D8"/>
+                </Border>
+                <Border x:Name="ToastBox" Padding="16,9" CornerRadius="18" Background="#E61B1D22" BorderBrush="#2E323A"
+                        BorderThickness="1" Margin="0,0,0,8" Visibility="Collapsed" IsHitTestVisible="False"
+                        HorizontalAlignment="Left">
+                    <TextBlock x:Name="ToastText" FontSize="15" TextWrapping="Wrap" MaxWidth="300"/>
+                </Border>
+                <Border x:Name="RecBadge" Padding="16,9" CornerRadius="18" Background="#C0300A0A" BorderBrush="#E5574F"
+                        BorderThickness="1" Margin="0,0,0,8" Visibility="Collapsed" IsHitTestVisible="False"
+                        HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="11" Height="11" Fill="#FF4D4D" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="RecText" Text="REC 00:00" FontSize="15" FontWeight="SemiBold"
+                                   Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border Padding="16,9" CornerRadius="18" Background="#B3000000" IsHitTestVisible="False"
+                        HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse x:Name="StatusDot" Width="11" Height="11" Fill="#E0A030" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="StatusText" Text="Searching…" FontSize="15" Margin="10,0,0,0"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock x:Name="SensorText" Text="" FontSize="15" Foreground="#9AA0A9" Margin="12,0,0,0"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Slow picture warning (USB 2 / extension cable) -->
+        <Border x:Name="WarnCard" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Background="#F2181A1F" BorderBrush="#E0A030" BorderThickness="1.5" CornerRadius="18" Padding="28,24">
+            <Border.LayoutTransform><StaticResource ResourceKey="UiScale"/></Border.LayoutTransform>
+            <StackPanel Width="500">
+                <TextBlock x:Name="WarnTitle" Text="The picture is running slowly" FontSize="21" FontWeight="SemiBold"
+                           Foreground="#F0B040"/>
+                <TextBlock x:Name="WarnBody" FontSize="15" TextWrapping="Wrap" Foreground="#D3D7DD" Margin="0,12,0,0"/>
+                <CheckBox x:Name="WarnSnooze" Style="{StaticResource DarkCheck}" Margin="0,18,0,0"
+                          Content="Don't show this again for a month"/>
+                <Button Style="{StaticResource PillButton}" Content="Keep using anyway" Width="230"
+                        HorizontalAlignment="Right" Margin="0,18,0,0" Click="WarnOk_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
