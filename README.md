@@ -11,11 +11,11 @@ A small Windows app for the **Bebird K10 USB otoscope**. Round scope view, auto-
 
 Long story short: I bought the Bebird K10 because it's USB, it's reliable, there's no battery to slowly die, and it just works on a Windows PC. Perfect for computer nerds like us.
 
-Then Bebird took their PC software off their server. The download button on their website now goes nowhere, and as far as I know they don't make a wired model anymore. The K10 itself still works as a webcam, but the part that keeps the picture upright (it has a tilt sensor in the wand) lived in that software. Without it the picture spins around with your hand and is basically unusable. Perfectly good hardware, turned into e-waste by a deleted download. So here we are.
+<p align="center"><img src="docs/k10-device.jpg" ></p>
+
+Then Bebird took their PC software off their server. The download button on their website (https://www.bebirdmall.com/pages/bebird-app-download) now goes nowhere, and as far as I know they don't make a wired model anymore. The K10 itself still works as a webcam, but the part that keeps the picture upright (it has a tilt sensor in the wand) lived in that software. Without it the picture spins around with your hand and is basically unusable. Perfectly good hardware, turned into e-waste by a deleted download. So here we are.
 
 This is a from-scratch replacement, written by watching how the device talks to Windows. No Bebird code or files were used.
-
-<p align="center"><img src="docs/k10-device.jpg" width="520"></p>
 
 ## Features
 
