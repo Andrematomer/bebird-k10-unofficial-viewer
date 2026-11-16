@@ -6,6 +6,8 @@ scope view, keeps it upright using the wand's built-in tilt sensor, and lets you
 > **Unofficial.** Not made by, affiliated with, endorsed by or supported by Bebird. "Bebird" is their name; it is used
 > here only to say which device this works with. It is built for the K10 only and has not been tried on other models.
 
+<p align="center"><img src="docs/k10-device.jpg" alt="The Bebird K10 USB otoscope this app is made for" width="420"><br><sub>The device this is for: the Bebird K10 (wired USB otoscope). If yours looks different, this app is not for it.</sub></p>
+
 ## Why this exists
 
 The K10 plugs in over USB and shows up as an ordinary webcam, but it also sends tilt-sensor data. Bebird's PC program

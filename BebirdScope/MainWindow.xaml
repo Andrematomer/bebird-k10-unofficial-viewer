@@ -197,14 +197,14 @@
                 <StackPanel.LayoutTransform><StaticResource ResourceKey="UiScale"/></StackPanel.LayoutTransform>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <ToggleButton x:Name="BtnLevel" Style="{StaticResource PillToggle}" Content="Auto-level"
+                    <ToggleButton x:Name="BtnLevel" Width="93" Style="{StaticResource PillToggle}" Content="Auto-level"
                                   Click="Level_Click" ToolTip="Keep the picture upright using the wand's sensor"/>
                     <TextBlock Text="S" Style="{StaticResource KeyHintLeft}"/>
                 </StackPanel>
 
                 <!-- Ear selector: normal view / mirrored view (this width is the reference for every button) -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <ToggleButton x:Name="BtnEarL" Style="{StaticResource PillToggle}" Width="66" Margin="0,0,1,0"
+                    <ToggleButton x:Name="BtnEarL" Style="{StaticResource PillToggle}" Width="46" Margin="0,0,1,0"
                                   Padding="0,9" Click="EarL_Click" ToolTip="Normal view">
                         <ToggleButton.Tag><CornerRadius>21,0,0,21</CornerRadius></ToggleButton.Tag>
                         <Viewbox Width="24" Height="24">
@@ -218,7 +218,7 @@
                             </Canvas>
                         </Viewbox>
                     </ToggleButton>
-                    <ToggleButton x:Name="BtnEarR" Style="{StaticResource PillToggle}" Width="66"
+                    <ToggleButton x:Name="BtnEarR" Style="{StaticResource PillToggle}" Width="46"
                                   Padding="0,9" Click="EarR_Click" ToolTip="Mirrored view">
                         <ToggleButton.Tag><CornerRadius>0,21,21,0</CornerRadius></ToggleButton.Tag>
                         <Viewbox Width="24" Height="24" RenderTransformOrigin="0.5,0.5">
@@ -237,7 +237,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <ToggleButton x:Name="BtnCircle" Style="{StaticResource PillToggle}" Content="Scope"
+                    <ToggleButton x:Name="BtnCircle" Width="93" Style="{StaticResource PillToggle}" Content="Scope"
                                   Click="Circle_Click" ToolTip="Round scope mask"/>
                     <TextBlock Text="C" Style="{StaticResource KeyHintLeft}"/>
                 </StackPanel>
@@ -251,17 +251,17 @@
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
                     <TextBlock Text="R" Style="{StaticResource KeyHintRight}"/>
-                    <ToggleButton x:Name="BtnRec" Style="{StaticResource PillToggleRed}" Content="Record"
+                    <ToggleButton x:Name="BtnRec" Width="93" Style="{StaticResource PillToggleRed}" Content="Record"
                                   Click="Rec_Click" ToolTip="Record video (MP4) of what you see"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
                     <TextBlock Text="Space" Style="{StaticResource KeyHintRight}"/>
-                    <Button x:Name="BtnSnap" Style="{StaticResource PillButton}" Content="Snapshot"
+                    <Button x:Name="BtnSnap" Width="93" Style="{StaticResource PillButton}" Content="Snapshot"
                             Click="Snap_Click" ToolTip="Save a photo"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="F11" Style="{StaticResource KeyHintRight}"/>
-                    <Button x:Name="BtnFull" Style="{StaticResource PillButton}" Content="Fullscreen"
+                    <Button x:Name="BtnFull" Width="93" Style="{StaticResource PillButton}" Content="Fullscreen"
                             Click="Full_Click" ToolTip="Fullscreen on / off (double-click the picture also works)"/>
                 </StackPanel>
             </StackPanel>
@@ -288,7 +288,7 @@
                     </Grid>
                 </Border>
 
-                <Button x:Name="BtnPath" Style="{StaticResource PillButton}" Content="..." HorizontalAlignment="Right" Click="Browse_Click" ToolTip="Save folder (click to change)"/>
+                <Button x:Name="BtnPath" Width="213" Style="{StaticResource PillButton}" Content="..." HorizontalAlignment="Right" Click="Browse_Click" ToolTip="Save folder (click to change)"/>
             </StackPanel>
         </Grid>
 
