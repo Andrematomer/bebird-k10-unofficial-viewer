@@ -1,19 +1,19 @@
 # K10 Viewer
 
-![K10 Viewer screenshot](docs/screenshot.png)
-
 A small Windows app for the **Bebird K10 USB otoscope**. Round scope view, auto-level using the wand's built-in gyro, photos and video recording.
 
 > **Unofficial.** Not made by, affiliated with, endorsed by or supported by Bebird. "Bebird" is their name; it is used
 > here only to say which device this works with. It is built for the K10 only and has not been tried on other models.
 
+![K10 Viewer screenshot](docs/screenshot.png)
+
 ## Why this exists
 
-Long story short: I bought the Bebird K10 because it's USB, it's reliable, there's no battery to slowly die, and it just works on a Windows PC. Perfect for computer nerds like us.
+Long story short: I bought the Bebird K10 because it's USB, it's reliable, there's no battery to slowly die, and it just works on a Windows PC. Perfect for computer nerds like us. Then Bebird took their PC software off their server.
 
 <p align="center"><img src="docs/k10-device.jpg" ></p>
 
-Then Bebird took their PC software off their server. The download button on their website (https://www.bebirdmall.com/pages/bebird-app-download) now goes nowhere, and as far as I know they don't make a wired model anymore. The K10 itself still works as a webcam, but the part that keeps the picture upright (it has a tilt sensor in the wand) lived in that software. Without it the picture spins around with your hand and is basically unusable. Perfectly good hardware, turned into e-waste by a deleted download. So here we are.
+The download button on their website (https://www.bebirdmall.com/pages/bebird-app-download) now goes nowhere, and as far as I know they don't make a wired model anymore. The K10 itself still works as a webcam, but the part that keeps the picture upright (it has a tilt sensor in the wand) lived in that software. Without it the picture spins around with your hand and is basically unusable. Perfectly good hardware, turned into e-waste by a deleted download. So here we are.
 
 This is a from-scratch replacement, written by watching how the device talks to Windows. No Bebird code or files were used.
 
