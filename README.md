@@ -13,7 +13,7 @@ Long story short: I bought the Bebird K10 because it's USB, it's reliable, there
 
 <p align="center"><img src="docs/k10-device.jpg" ></p>
 
-The download button on their website (https://www.bebirdmall.com/pages/bebird-app-download) now goes nowhere, and as far as I know they don't make a wired model anymore. The K10 itself still works as a webcam, but the part that keeps the picture upright (it has a tilt sensor in the wand) lived in that software. Without it the picture spins around with your hand and is basically unusable. Perfectly good hardware, turned into e-waste by a deleted download. So here we are.
+The download link for Windows system (https://www.bebirdmall.com/pages/bebird-app-download) now goes nowhere. The K10 itself still works (detected as a webcam), but the part that keeps the picture upright (it has a tilt sensor in the wand) lived in that software. Without it, it is basically unusable. Perfectly good hardware, turned into e-waste by a deleted download. So here we are.
 
 This is a from-scratch replacement, written by watching how the device talks to Windows. No Bebird code or files were used.
 
@@ -27,7 +27,7 @@ This is a from-scratch replacement, written by watching how the device talks to 
 - Buttons scale with the window (fine on 4K), shortcut keys are shown next to every button
 - Warns you if a USB 2 port, hub or extension cable is slowing the picture down
 
-## Known limitations (a quirk of the K10 firmware)
+## Known limitations
 
 - **If you unplug the K10 while the app is open, the app tells you and closes itself.** Plug it back in and start the
   app again. (Restarting the camera inside the same app run hangs inside Windows, so a fresh start is the reliable way.)
