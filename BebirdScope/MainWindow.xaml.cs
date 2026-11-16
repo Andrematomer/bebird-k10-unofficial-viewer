@@ -512,6 +512,7 @@ public partial class MainWindow : Window
 
     void ShowSlowWarning()
     {
+        if (_closing) return;
         _warnedThisSession = true;
         WarnBody.Text = "The picture is only running at about " + _avgFps.ToString("0") + " frames per second (normal is 30).\n\n" +
                         "The K10 needs a USB 3 port. Plug it straight into a USB 3 port on the PC (usually blue), " +
@@ -539,25 +540,9 @@ public partial class MainWindow : Window
         StatusDot.Fill = Red;
         StatusText.Text = "K10 disconnected";
         SensorText.Text = "";
-        int left = 5;
-        ShowOverlay("K10 disconnected", "Plug it back in and open the app again.\nExiting in " + left + "…");
-        StatusText.Text = "K10 disconnected, exiting in " + left;
-
-        var t = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-        t.Tick += (s, e) =>
-        {
-            left--;
-            if (left > 0)
-            {
-                ShowOverlay("K10 disconnected", "Plug it back in and open the app again.\nExiting in " + left + "…");
-                StatusText.Text = "K10 disconnected, exiting in " + left;
-                return;
-            }
-            t.Stop();
-            Close();   // finishes a running recording first
-            _exitTimer = new Timer(_ => Environment.Exit(0), null, 3000, System.Threading.Timeout.Infinite); // safety net
-        };
-        t.Start();
+        // close at once: a countdown would show 0 fps and trigger the USB 2 warning
+        Close();   // finishes a running recording first
+        _exitTimer = new Timer(_ => Environment.Exit(0), null, 3000, System.Threading.Timeout.Infinite); // safety net
     }
 
     void ShowOverlay(string title, string sub)

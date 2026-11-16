@@ -9,7 +9,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>BebirdScope</RootNamespace>
     <AssemblyName>K10Viewer</AssemblyName>
-    <Version>1.2.0</Version>
+    <Version>1.0.0</Version>
     <Product>K10 Viewer</Product>
     <Description>Unofficial viewer for the Bebird K10 USB otoscope with gyro auto-level</Description>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
