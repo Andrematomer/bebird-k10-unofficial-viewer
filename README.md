@@ -1,4 +1,4 @@
-# Bebird K10 Viewer (unofficial)
+﻿# K10 Viewer (unofficial, for the Bebird K10)
 
 A small Windows app for the **Bebird K10 USB otoscope** (the wired ear camera). It shows the live picture in a round
 scope view, keeps it upright using the wand's built-in tilt sensor, and lets you take photos and record video.
@@ -28,13 +28,13 @@ code or files were used.
 - **Photos** (PNG) and **video recording** (MP4, H.264, what you see is what you get)
 - Thumbnail of your latest photo/video; click it to show the file in Explorer
 - Choose the save folder right in the window
-- Freeze, fullscreen, buttons that scale with your screen (readable on 4K)
+- Fullscreen, buttons that scale with your screen (readable on 4K)
 - Warns you when the picture runs slowly because of a USB 2 port, hub or extension cable
 
 ## Using it
 
 1. Plug the K10 into a **USB 3 port, directly** (no hub, no extension cable). Plugging in before or after starting the app both work.
-2. Start `BebirdScope.exe` (single file, nothing to install). The picture appears by itself.
+2. Start `K10Viewer.exe` (single file, nothing to install). The picture appears by itself.
 3. When you are done, close the app and unplug the K10.
 
 Every button shows its shortcut key next to it.
@@ -46,12 +46,11 @@ Every button shows its shortcut key next to it.
 | Scope | C | Round scope mask on / off |
 | Record | R | Start / stop recording an MP4 |
 | Snapshot | Space | Save a photo |
-| Freeze | P | Pause the picture |
 | Fullscreen | F11 | Also double-click the picture; Esc leaves fullscreen |
 | (no button) Reverse rotation | I | If the picture ever rotates the wrong way |
 | (no button) Diagnostics | F12 | Raw gyro values and counters |
 
-Photos and videos go to `Pictures\K10 Captures` unless you pick another folder in the box at the bottom right.
+Photos and videos go to `Pictures\K10 Captures` unless you pick another folder with the folder button at the bottom right.
 
 ## USB 3 matters
 
@@ -74,11 +73,11 @@ so and suggests a direct USB 3 port. You can dismiss it, and tick the box to be 
 
 ## Building
 
-`powershell -ExecutionPolicy Bypass -File build-release.ps1` builds `dist\BebirdScope.exe`. It uses a private .NET 8 SDK in
+`powershell -ExecutionPolicy Bypass -File build-release.ps1` builds `dist\K10Viewer.exe`. It uses a private .NET 8 SDK in
 `.tools\` (downloaded automatically if missing, about 290 MB, only needed for building). Source is in `BebirdScope\`
 (WPF, .NET 8, DirectShow via the DirectShowLib package, Windows' built-in H.264 encoder for video).
 
-Developer switches: `BebirdScope.exe --demo` shows a test pattern without a camera (`--demo-slow` for the slow-picture
+Developer switches: `K10Viewer.exe --demo` shows a test pattern without a camera (`--demo-slow` for the slow-picture
 warning, `--demo-autorecord` for a recording test); `--selftest ...` runs headless camera experiments (`SelfTest.cs`).
 
 ## License

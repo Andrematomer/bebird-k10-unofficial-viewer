@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -8,16 +8,21 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <RootNamespace>BebirdScope</RootNamespace>
-    <AssemblyName>BebirdScope</AssemblyName>
-    <Version>1.1.0</Version>
-    <Product>Bebird Scope</Product>
+    <AssemblyName>K10Viewer</AssemblyName>
+    <Version>1.2.0</Version>
+    <Product>K10 Viewer</Product>
     <Description>Unofficial viewer for the Bebird K10 USB otoscope with gyro auto-level</Description>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <NoWarn>$(NoWarn);NU1701</NoWarn>
+    <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DirectShowLib" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="app.ico" />
   </ItemGroup>
 
 </Project>

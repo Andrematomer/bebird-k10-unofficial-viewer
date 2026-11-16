@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 
@@ -141,7 +141,7 @@ internal sealed class K10Device : IDisposable
 
     void Run()
     {
-        Log.Write("=== Bebird Scope worker started ===");
+        Log.Write("=== K10 Viewer worker started ===");
         while (!_stop)
         {
             try { Cycle(); }

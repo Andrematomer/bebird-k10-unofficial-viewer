@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -25,7 +25,6 @@ public partial class MainWindow : Window
     WriteableBitmap _bmp;
     long _lastFrameId;
     bool _loading = true;
-    bool _frozen;
     bool _fullscreen;
     WindowState _prevState;
     WindowStyle _prevStyle;
@@ -99,7 +98,7 @@ public partial class MainWindow : Window
         BtnEarL.IsChecked = !_s.Mirror;
         BtnEarR.IsChecked = _s.Mirror;
         BtnCircle.IsChecked = _s.Circle;
-        PathBox.Text = _s.EffectiveSaveFolder();
+        ShowSavePath(_s.EffectiveSaveFolder());
         _loading = false;
 
         ApplyFrameSize(_frameW, _frameH);
@@ -224,22 +223,8 @@ public partial class MainWindow : Window
 
         if (_s.Circle)
         {
-            // largest circle that fits the window without touching any control
-            var rects = new List<Rect>();
-            foreach (var p in hosts)
-            {
-                if (p.ActualWidth <= 0 || p.ActualHeight <= 0) continue;
-                Point pt = p.TranslatePoint(new Point(0, 0), RootGrid);
-                rects.Add(new Rect(pt.X, pt.Y, p.ActualWidth, p.ActualHeight));
-            }
-            var center = new Point(w / 2, h / 2);
+            // the circle always uses the full height of the window; the buttons sit over the corners
             double d = Math.Min(w, h);
-            while (d > 160)
-            {
-                double r = d / 2 + 6;
-                if (!rects.Any(rc => DistanceToRect(center, rc) < r)) break;
-                d -= 4;
-            }
             VideoBox.Width = d;
             VideoBox.Height = d;
         }
@@ -262,7 +247,7 @@ public partial class MainWindow : Window
         if (dt <= 0 || dt > 0.25) dt = 1.0 / 60;
 
         bool newFrame = false;
-        if (!_frozen)
+        
         {
             if (_frames.Blit(ref _lastFrameId, ref _bmp, out bool sizeChanged))
             {
@@ -342,13 +327,6 @@ public partial class MainWindow : Window
     void SetMirror(bool v) { _s.Mirror = v; BtnEarL.IsChecked = !v; BtnEarR.IsChecked = v; ApplyTransform(); }
     void SetCircle(bool v) { _s.Circle = v; BtnCircle.IsChecked = v; ApplyFrameSize(_frameW, _frameH); }
 
-    void SetFreeze(bool v)
-    {
-        _frozen = v;
-        BtnFreeze.IsChecked = v;
-        Toast(v ? "Paused" : "Live");
-    }
-
     void ToggleFullscreen()
     {
         if (!_fullscreen)
@@ -372,7 +350,6 @@ public partial class MainWindow : Window
     void EarL_Click(object s, RoutedEventArgs e) => SetMirror(false);
     void EarR_Click(object s, RoutedEventArgs e) => SetMirror(true);
     void Circle_Click(object s, RoutedEventArgs e) => SetCircle(BtnCircle.IsChecked == true);
-    void Freeze_Click(object s, RoutedEventArgs e) => SetFreeze(BtnFreeze.IsChecked == true);
     void Snap_Click(object s, RoutedEventArgs e) => Snapshot();
     void Full_Click(object s, RoutedEventArgs e) => ToggleFullscreen();
     async void Rec_Click(object s, RoutedEventArgs e) => await ToggleRecordAsync();
@@ -393,8 +370,6 @@ public partial class MainWindow : Window
             case Key.S: SetLevel(!_s.AutoLevel); break;
             case Key.M: SetMirror(!_s.Mirror); break;
             case Key.C: SetCircle(!_s.Circle); break;
-            case Key.P:
-            case Key.F: SetFreeze(!_frozen); break;
             case Key.R: e.Handled = true; await ToggleRecordAsync(); return;
             case Key.Space: Snapshot(); break;
             case Key.I:
@@ -631,33 +606,31 @@ public partial class MainWindow : Window
             return null;
         }
     }
-
-    void CommitPath()
+    /// <summary>Shows the save folder on the button as "...\FolderName" (trimmed with an ellipsis if still too long); full path in the tooltip.</summary>
+    void ShowSavePath(string p)
     {
-        string p = PathBox.Text.Trim().Trim('"');
-        if (string.Equals(p, _s.EffectiveSaveFolder(), StringComparison.OrdinalIgnoreCase)) return;
+        string name = Path.GetFileName(p.TrimEnd('\\', '/'));
+        if (string.IsNullOrEmpty(name)) name = p;
+        BtnPath.Content = new TextBlock
+        {
+            Text = "...\\" + name,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+            MaxWidth = 112
+        };
+        BtnPath.ToolTip = "Save folder: " + p + "\nClick to change";
+    }
+    void ApplySaveFolder(string p)
+    {
         try
         {
-            if (string.IsNullOrEmpty(p)) throw new ArgumentException("empty");
             Directory.CreateDirectory(p);
             _s.SaveFolder = p;
+            ShowSavePath(p);
             Toast("Saving to " + p);
             RefreshLatest();
         }
-        catch
-        {
-            Toast("Can't use that folder");
-            PathBox.Text = _s.EffectiveSaveFolder();
-        }
+        catch { Toast("Can't use that folder"); }
     }
-
-    void PathBox_KeyDown(object s, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter) { CommitPath(); Keyboard.ClearFocus(); Focus(); e.Handled = true; }
-        else if (e.Key == Key.Escape) { PathBox.Text = _s.EffectiveSaveFolder(); Keyboard.ClearFocus(); Focus(); e.Handled = true; }
-    }
-
-    void PathBox_LostFocus(object s, KeyboardFocusChangedEventArgs e) => CommitPath();
 
     void Browse_Click(object s, RoutedEventArgs e)
     {
@@ -666,11 +639,7 @@ public partial class MainWindow : Window
             Title = "Choose where photos and videos are saved",
             InitialDirectory = Directory.Exists(_s.EffectiveSaveFolder()) ? _s.EffectiveSaveFolder() : null
         };
-        if (dlg.ShowDialog(this) == true)
-        {
-            PathBox.Text = dlg.FolderName;
-            CommitPath();
-        }
+        if (dlg.ShowDialog(this) == true) ApplySaveFolder(dlg.FolderName);
     }
 
     /// <summary>Finds the newest photo/video of ours in the save folder and shows its thumbnail.</summary>

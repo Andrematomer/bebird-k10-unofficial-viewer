@@ -1,7 +1,7 @@
-<Window x:Class="BebirdScope.MainWindow"
+﻿<Window x:Class="BebirdScope.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Bebird Scope" Width="1200" Height="820" MinWidth="720" MinHeight="520"
+        Title="K10 Viewer" Icon="app.ico" Width="1200" Height="820" MinWidth="720" MinHeight="520"
         Background="#000000" Foreground="#E8EAED"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI Variable Text, Segoe UI"
@@ -259,11 +259,6 @@
                     <Button x:Name="BtnSnap" Style="{StaticResource PillButton}" Content="Snapshot"
                             Click="Snap_Click" ToolTip="Save a photo"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
-                    <TextBlock Text="P" Style="{StaticResource KeyHintRight}"/>
-                    <ToggleButton x:Name="BtnFreeze" Style="{StaticResource PillToggle}" Content="Freeze"
-                                  Click="Freeze_Click" ToolTip="Pause the picture"/>
-                </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="F11" Style="{StaticResource KeyHintRight}"/>
                     <Button x:Name="BtnFull" Style="{StaticResource PillButton}" Content="Fullscreen"
@@ -293,13 +288,7 @@
                     </Grid>
                 </Border>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBox x:Name="PathBox" Style="{StaticResource DarkBox}" Width="270" VerticalContentAlignment="Center"
-                             ToolTip="Folder where photos and videos are saved. Press Enter to apply."
-                             PreviewKeyDown="PathBox_KeyDown" LostKeyboardFocus="PathBox_LostFocus"/>
-                    <Button x:Name="BtnBrowse" Style="{StaticResource PillButton}" Content="…" Width="46" Margin="8,0,0,0"
-                            Click="Browse_Click" ToolTip="Choose the save folder"/>
-                </StackPanel>
+                <Button x:Name="BtnPath" Style="{StaticResource PillButton}" Content="..." HorizontalAlignment="Right" Click="Browse_Click" ToolTip="Save folder (click to change)"/>
             </StackPanel>
         </Grid>
 

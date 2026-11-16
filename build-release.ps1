@@ -1,4 +1,4 @@
-# Rebuilds dist\BebirdScope.exe (single file, self-contained, no install needed to run).
+﻿# Rebuilds dist\K10Viewer.exe (single file, self-contained, no install needed to run).
 # Usage:  powershell -ExecutionPolicy Bypass -File build-release.ps1
 # It uses a private .NET SDK in .tools\ (downloaded automatically if missing). Nothing is installed system-wide.
 
@@ -29,4 +29,4 @@ dotnet publish BebirdScope.csproj -c Release -r win-x64 --self-contained true `
     -nologo -v minimal -o (Join-Path $root 'dist')
 
 Write-Host ''
-Get-Item (Join-Path $root 'dist\BebirdScope.exe') | Select-Object FullName, LastWriteTime, @{n='MB';e={[math]::Round($_.Length/1MB,1)}}
+Get-Item (Join-Path $root 'dist\K10Viewer.exe') | Select-Object FullName, LastWriteTime, @{n='MB';e={[math]::Round($_.Length/1MB,1)}}

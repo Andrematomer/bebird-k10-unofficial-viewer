@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 
 namespace BebirdScope;
 
@@ -33,7 +33,7 @@ public partial class App : Application
             Log.Write("UNHANDLED: " + ex.Exception);
             MessageBox.Show("Something went wrong:\n\n" + ex.Exception.Message +
                             "\n\nDetails were written to:\n" + Log.FilePath,
-                            "Bebird Scope", MessageBoxButton.OK, MessageBoxImage.Error);
+                            "K10 Viewer", MessageBoxButton.OK, MessageBoxImage.Error);
             ex.Handled = true;
         };
 
