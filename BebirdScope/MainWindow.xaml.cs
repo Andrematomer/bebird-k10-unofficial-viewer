@@ -209,7 +209,7 @@ public partial class MainWindow : Window
         if (w < 50 || h < 50) return;
 
         // all controls grow with the window so they stay readable on a 4K screen
-        double scale = Math.Max(1.0, Math.Min(2.6, Math.Min(w / 1000.0, h / 700.0)));
+        double scale = Math.Max(0.15, Math.Min(2.6, Math.Min(w / 1000.0, h / 700.0)));
         if (Math.Abs(scale - _uiScale) > 0.01)
         {
             _uiScale = scale;
@@ -221,9 +221,9 @@ public partial class MainWindow : Window
 
         var hosts = new FrameworkElement[] { HostLeft, HostRight, HostBR, HostStatus };
 
-        if (_s.Circle)
+        if (_s.Circle || _s.AutoLevel)
         {
-            // the circle always uses the full height of the window; the buttons sit over the corners
+            // the circle (or the uncropped rotating picture) always uses the full height of the window; the buttons sit over the corners
             double d = Math.Min(w, h);
             VideoBox.Width = d;
             VideoBox.Height = d;
@@ -302,6 +302,17 @@ public partial class MainWindow : Window
         ScaleT.ScaleY = 1;
     }
 
+    /// <summary>Side of the smallest even square that holds the frame at any rotation angle.</summary>
+    static int DiagSize(int w, int h) => ((int)Math.Ceiling(Math.Sqrt((double)w * w + (double)h * h)) + 1) & ~1;
+
+    /// <summary>Size of a photo / video frame for the current view mode.</summary>
+    (int W, int H) OutputSize(int w, int h, bool circle, bool level)
+    {
+        if (circle) { int s = Math.Min(w, h); return (s, s); }
+        if (level) { int s = DiagSize(w, h); return (s, s); }
+        return (w, h);
+    }
+
     void ApplyFrameSize(int w, int h)
     {
         _frameW = w; _frameH = h;
@@ -314,16 +325,24 @@ public partial class MainWindow : Window
             StageGrid.Height = sq;
             ClipGrid.Clip = new EllipseGeometry(new Point(sq / 2.0, sq / 2.0), sq / 2.0, sq / 2.0);
         }
+        else if (_s != null && _s.AutoLevel)
+        {
+            // the picture rotates, so give it a square stage as big as its diagonal: nothing is cropped at any angle
+            double sq = DiagSize(w, h);
+            StageGrid.Width = sq;
+            StageGrid.Height = sq;
+            ClipGrid.Clip = null;
+        }
         else
         {
             StageGrid.Width = w;
             StageGrid.Height = h;
-            ClipGrid.Clip = new RectangleGeometry(new Rect(0, 0, w, h));
+            ClipGrid.Clip = null;
         }
         LayoutVideo();
     }
 
-    void SetLevel(bool v) { _s.AutoLevel = v; BtnLevel.IsChecked = v; Toast(v ? "Auto-level on" : "Auto-level off"); }
+    void SetLevel(bool v) { _s.AutoLevel = v; BtnLevel.IsChecked = v; ApplyFrameSize(_frameW, _frameH); Toast(v ? "Auto-level on" : "Auto-level off"); }
     void SetMirror(bool v) { _s.Mirror = v; BtnEarL.IsChecked = !v; BtnEarR.IsChecked = v; ApplyTransform(); }
     void SetCircle(bool v) { _s.Circle = v; BtnCircle.IsChecked = v; ApplyFrameSize(_frameW, _frameH); }
 
@@ -520,11 +539,20 @@ public partial class MainWindow : Window
         StatusDot.Fill = Red;
         StatusText.Text = "K10 disconnected";
         SensorText.Text = "";
-        ShowOverlay("K10 disconnected", "Plug it back in and open the app again. Closing…");
+        int left = 5;
+        ShowOverlay("K10 disconnected", "Plug it back in and open the app again.\nExiting in " + left + "…");
+        StatusText.Text = "K10 disconnected, exiting in " + left;
 
-        var t = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2.5) };
+        var t = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         t.Tick += (s, e) =>
         {
+            left--;
+            if (left > 0)
+            {
+                ShowOverlay("K10 disconnected", "Plug it back in and open the app again.\nExiting in " + left + "…");
+                StatusText.Text = "K10 disconnected, exiting in " + left;
+                return;
+            }
             t.Stop();
             Close();   // finishes a running recording first
             _exitTimer = new Timer(_ => Environment.Exit(0), null, 3000, System.Threading.Timeout.Infinite); // safety net
@@ -581,10 +609,8 @@ public partial class MainWindow : Window
         {
             if (opaque) dc.DrawRectangle(Brushes.Black, null, new Rect(0, 0, outW, outH));
             dc.PushTransform(new TranslateTransform(-(w - outW) / 2.0, -(h - outH) / 2.0));
-            Geometry clip = circle
-                ? new EllipseGeometry(new Point(w / 2.0, h / 2.0), r, r)
-                : (Geometry)new RectangleGeometry(new Rect(0, 0, w, h));
-            dc.PushClip(clip);
+            if (circle) dc.PushClip(new EllipseGeometry(new Point(w / 2.0, h / 2.0), r, r));
+            else dc.PushClip(new RectangleGeometry(new Rect(-(outW - w) / 2.0 - 1, -(outH - h) / 2.0 - 1, outW + 2, outH + 2)));
             dc.PushTransform(new ScaleTransform(_s.Mirror ? -1 : 1, 1, w / 2.0, h / 2.0));
             dc.PushTransform(new RotateTransform(_disp, w / 2.0, h / 2.0));
             dc.DrawImage(_bmp, new Rect(0, 0, w, h));
@@ -606,18 +632,43 @@ public partial class MainWindow : Window
             return null;
         }
     }
-    /// <summary>Shows the save folder on the button as "...\FolderName" (trimmed with an ellipsis if still too long); full path in the tooltip.</summary>
+    /// <summary>
+    /// Shows the save folder on the button. The whole path if it fits; otherwise "C:\...\Folder", then "...\Folder",
+    /// then the folder name trimmed with an ellipsis. The full path is always in the tooltip.
+    /// </summary>
     void ShowSavePath(string p)
     {
-        string name = Path.GetFileName(p.TrimEnd('\\', '/'));
-        if (string.IsNullOrEmpty(name)) name = p;
+        double avail = BtnPath.Width - 14;   // border + padding + a little air
+        string trimmed = p.TrimEnd('\\', '/');
+        string name = Path.GetFileName(trimmed);
+        if (string.IsNullOrEmpty(name)) name = trimmed;
+        string root = Path.GetPathRoot(trimmed) ?? "";
+
+        var candidates = new List<string> { trimmed };
+        if (root.Length > 0 && trimmed.Length > root.Length && Path.GetDirectoryName(trimmed)?.TrimEnd('\\') != root.TrimEnd('\\'))
+            candidates.Add(root + "...\\" + name);
+        candidates.Add("...\\" + name);
+
+        string pick = null;
+        foreach (var cand in candidates)
+            if (MeasureText(cand) <= avail) { pick = cand; break; }
+        if (pick == null) pick = "...\\" + name;
+
         BtnPath.Content = new TextBlock
         {
-            Text = "...\\" + name,
+            Text = pick,
             TextTrimming = TextTrimming.CharacterEllipsis,
-            MaxWidth = 112
+            MaxWidth = avail
         };
         BtnPath.ToolTip = "Save folder: " + p + "\nClick to change";
+    }
+
+    double MeasureText(string s)
+    {
+        var ft = new FormattedText(s, System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+            new Typeface(BtnPath.FontFamily, BtnPath.FontStyle, BtnPath.FontWeight, BtnPath.FontStretch),
+            BtnPath.FontSize, Brushes.White, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        return ft.Width;
     }
     void ApplySaveFolder(string p)
     {
@@ -708,8 +759,7 @@ public partial class MainWindow : Window
         {
             int w = _bmp.PixelWidth, h = _bmp.PixelHeight;
             // with the round scope the photo is the circle's bounding square, otherwise the whole frame
-            int outW = _s.Circle ? Math.Min(w, h) : w;
-            int outH = _s.Circle ? Math.Min(w, h) : h;
+            var (outW, outH) = OutputSize(w, h, _s.Circle, _s.AutoLevel);
 
             var rtb = new RenderTargetBitmap(outW, outH, 96, 96, PixelFormats.Pbgra32);
             rtb.Render(BuildView(w, h, outW, outH, _s.Circle, false));
@@ -752,8 +802,9 @@ public partial class MainWindow : Window
         {
             int w = _bmp.PixelWidth, h = _bmp.PixelHeight;
             _recCircle = _s.Circle;
-            _recW = (_recCircle ? Math.Min(w, h) : w) & ~1;      // H.264 wants even sizes
-            _recH = (_recCircle ? Math.Min(w, h) : h) & ~1;
+            var os = OutputSize(w, h, _recCircle, _s.AutoLevel);
+            _recW = os.W & ~1;      // H.264 wants even sizes
+            _recH = os.H & ~1;
             _recRtb = new RenderTargetBitmap(_recW, _recH, 96, 96, PixelFormats.Pbgra32);
             _recFirstFrame = null;
 

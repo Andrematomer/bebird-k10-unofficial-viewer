@@ -1,64 +1,31 @@
-﻿# K10 Viewer (unofficial, for the Bebird K10)
+# K10 Viewer
 
-A small Windows app for the **Bebird K10 USB otoscope** (the wired ear camera). It shows the live picture in a round
-scope view, keeps it upright using the wand's built-in tilt sensor, and lets you take photos and record video.
+![K10 Viewer screenshot](docs/screenshot.png)
+
+A small Windows app for the **Bebird K10 USB otoscope**. Round scope view, auto-level using the wand's built-in gyro, photos and video recording.
 
 > **Unofficial.** Not made by, affiliated with, endorsed by or supported by Bebird. "Bebird" is their name; it is used
 > here only to say which device this works with. It is built for the K10 only and has not been tried on other models.
 
-<p align="center"><img src="docs/k10-device.jpg" alt="The Bebird K10 USB otoscope this app is made for" width="420"><br><sub>The device this is for: the Bebird K10 (wired USB otoscope). If yours looks different, this app is not for it.</sub></p>
-
 ## Why this exists
 
-The K10 plugs in over USB and shows up as an ordinary webcam, but it also sends tilt-sensor data. Bebird's PC program
-used that data to keep the picture upright. Without it the picture turns with your hand and is practically unusable.
+Long story short: I bought the Bebird K10 because it's USB, it's reliable, there's no battery to slowly die, and it just works on a Windows PC. Perfect for computer nerds like us.
 
-That program is gone. The download button on Bebird's website still points at a server that no longer exists (DNS
-error). I emailed their support and asked for the installer, even just as an email attachment. First answer: computers
-are not supported. Second answer: the PC side is discontinued and there is no tool anymore. My last question, "can I at
-least get it by email?", got a one-word reply: **No.** As far as I can tell they no longer sell the wired model at all.
+Then Bebird took their PC software off their server. The download button on their website now goes nowhere, and as far as I know they don't make a wired model anymore. The K10 itself still works as a webcam, but the part that keeps the picture upright (it has a tilt sensor in the wand) lived in that software. Without it the picture spins around with your hand and is basically unusable. Perfectly good hardware, turned into e-waste by a deleted download. So here we are.
 
-So a product sold with a PC app lost the software it needs, and the company would not hand over a file it no longer
-distributes. If you sell hardware, the software it needs shouldn't be able to disappear, and if it does, owners should be
-free to replace it. This is that replacement, written from scratch by observing how the device talks to Windows. No Bebird
-code or files were used.
+This is a from-scratch replacement, written by watching how the device talks to Windows. No Bebird code or files were used.
+
+<p align="center"><img src="docs/k10-device.jpg" width="520"></p>
 
 ## Features
 
-- Live round scope view, as large as the window allows, with **auto-level** from the gyro (the picture stays upright as you rotate the wand)
+- Round scope view as big as the window allows, with **auto-level** from the gyro
 - Normal / mirrored view (for the other ear), round mask on/off
-- **Photos** (PNG) and **video recording** (MP4, H.264, what you see is what you get)
-- Thumbnail of your latest photo/video; click it to show the file in Explorer
-- Choose the save folder right in the window
-- Fullscreen, buttons that scale with your screen (readable on 4K)
-- Warns you when the picture runs slowly because of a USB 2 port, hub or extension cable
-
-## Using it
-
-1. Plug the K10 into a **USB 3 port, directly** (no hub, no extension cable). Plugging in before or after starting the app both work.
-2. Start `K10Viewer.exe` (single file, nothing to install). The picture appears by itself.
-3. When you are done, close the app and unplug the K10.
-
-Every button shows its shortcut key next to it.
-
-| Button | Key | What it does |
-|---|---|---|
-| Auto-level | S | Keeps the picture upright using the gyro |
-| Ear icons | M | Normal view / mirrored view |
-| Scope | C | Round scope mask on / off |
-| Record | R | Start / stop recording an MP4 |
-| Snapshot | Space | Save a photo |
-| Fullscreen | F11 | Also double-click the picture; Esc leaves fullscreen |
-| (no button) Reverse rotation | I | If the picture ever rotates the wrong way |
-| (no button) Diagnostics | F12 | Raw gyro values and counters |
-
-Photos and videos go to `Pictures\K10 Captures` unless you pick another folder with the folder button at the bottom right.
-
-## USB 3 matters
-
-The K10 calls itself "USB2.0 Camera" but it needs a USB 3 port to run smoothly. On USB 2 it technically works but only
-at about 8 to 20 frames per second instead of 30. If the picture stays below about 22 fps for a few seconds, the app says
-so and suggests a direct USB 3 port. You can dismiss it, and tick the box to be left alone for a month.
+- **Photos** (PNG) and **video recording** (MP4)
+- Thumbnail of your latest capture, click it to open the folder
+- Pick the save folder right in the window
+- Buttons scale with the window (fine on 4K), shortcut keys are shown next to every button
+- Warns you if a USB 2 port, hub or extension cable is slowing the picture down
 
 ## Known limitations (a quirk of the K10 firmware)
 
